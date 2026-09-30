@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Abandoned but Not Forgotten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060a1c;--bg2:#0e1633;--card:#141d42;--ink:#eaf0ff;--mut:#9aa8d6;--amb:#ffb547;--cy:#4de1d0;--vi:#8a7bff;--bad:#ff6b8a;--good:#5df0a0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(120% 80% at 50% 0%,#16225a 0%,var(--bg) 60%);color:var(--ink);font-family:Nunito,system-ui,sans-serif;overflow:hidden}
+h1,h2,h3,.hd{font-family:'Chakra Petch',system-ui,sans-serif;margin:0}
+#stars{position:fixed;inset:0;z-index:0}
+#app{position:relative;z-index:1;height:100vh;height:100dvh;display:flex;flex-direction:column;max-width:1100px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:center;padding:12px 16px}
+.brand{font-family:'Chakra Petch';font-weight:700;font-size:15px;letter-spacing:.3px}
+.brand small{display:block;font-weight:500;color:var(--mut);font-size:11px}
+.chip{background:var(--card);border:1px solid #2a376f;border-radius:99px;padding:6px 12px;font-weight:800;font-size:13px}
+main{flex:1;min-height:0;overflow:auto;padding:0 16px 12px}
+.screen{display:none}.screen.on{display:block}
+nav{display:flex;background:#0a1130ee;border-top:1px solid #222e63}
+nav button{flex:1;background:none;border:0;color:var(--mut);padding:10px 4px 12px;font:700 12px Nunito;cursor:pointer}
+nav button b{display:block;font-size:20px;margin-bottom:2px}
+nav button.on{color:var(--amb)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--cy);outline-offset:2px}
+.btn{background:linear-gradient(135deg,var(--amb),#ff8a4c);color:#1a1030;border:0;border-radius:14px;padding:13px 22px;font:800 16px Nunito;cursor:pointer;box-shadow:0 6px 0 #b3572a;transition:transform .1s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #b3572a}
+.btn.ghost{background:var(--card);color:var(--ink);box-shadow:0 6px 0 #0b1233;border:1px solid #2a376f}
+/* name screen */
+.hero{text-align:center;padding:6vh 6px 0}
+.hero .orb{font-size:76px;animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px) rotate(4deg)}}
+.hero h1{font-size:clamp(28px,7vw,44px);line-height:1.1;margin:12px 0 8px}
+.hero p{color:var(--mut);max-width:440px;margin:0 auto 22px;line-height:1.5}
+input[type=text]{width:100%;max-width:320px;padding:14px;border-radius:14px;border:2px solid #2a376f;background:#0b1233;color:var(--ink);font:700 18px Nunito;text-align:center;margin-bottom:16px}
+/* field */
+#s-home.on{display:flex;flex-direction:column;height:100%}
+.hh h2{font-size:20px;margin:2px 2px}
+.map{flex:1;min-height:0;position:relative;border-radius:22px;border:1px solid #26336a;overflow:hidden;background:linear-gradient(180deg,#0c1438aa,#1a1440aa 70%,#2a1a3eaa);touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform;background-image:radial-gradient(#ffffff1c 1px,transparent 1px);background-size:38px 38px}
+.zc{position:absolute;right:10px;bottom:10px;display:flex;flex-direction:column;gap:8px;z-index:3}
+.zc button{width:44px;height:44px;border-radius:12px;border:1px solid #33418a;background:#0e1633ee;color:var(--ink);font:800 20px Nunito;cursor:pointer}
+.tip{position:absolute;left:10px;bottom:10px;font-size:12px;color:var(--mut);background:#0a1130cc;padding:6px 10px;border-radius:99px;pointer-events:none;z-index:3;max-width:70%}
+@media(min-width:700px){.modal{align-items:center}.sheet{border-radius:26px}}
+.obj{position:absolute;padding:6px;background:none;border:0;cursor:pointer;line-height:1;filter:drop-shadow(0 0 10px #4de1d055);opacity:.5;animation:fl 5s ease-in-out infinite;transition:opacity .3s,transform .2s}
+.obj:hover,.obj:focus-visible{opacity:1;transform:scale(1.18)}
+.obj.found{opacity:1;filter:drop-shadow(0 0 14px var(--amb))}
+.obj.found::after{content:"✓";position:absolute;right:-6px;top:-6px;background:var(--good);color:#062;border-radius:50%;font:800 12px Nunito;width:18px;height:18px;display:grid;place-items:center}
+.obj.junk{opacity:.3;filter:none}
+@keyframes fl{50%{transform:translate(6px,-9px) rotate(5deg)}}
+.hint-line{display:flex;justify-content:space-between;align-items:center;margin:12px 2px;color:var(--mut);font-size:14px}
+.bar{height:8px;border-radius:9px;background:#0b1233;overflow:hidden;flex:1;margin:0 12px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cy),var(--amb));width:0;transition:width .5s}
+/* modal */
+.modal{position:fixed;inset:0;background:#02051099;display:none;align-items:flex-end;justify-content:center;z-index:20}
+.modal.on{display:flex}
+.sheet{background:var(--bg2);border:1px solid #33418a;border-radius:26px 26px 0 0;width:100%;max-width:640px;max-height:88%;overflow:auto;padding:22px 20px calc(22px + env(safe-area-inset-bottom,0px));animation:up .3s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sheet .big{font-size:64px;text-align:center}
+.sheet h2{font-size:24px;text-align:center;margin:6px 0 2px}
+.meta{text-align:center;color:var(--cy);font-weight:800;font-size:13px;margin-bottom:12px}
+.story{line-height:1.65;font-size:16px}
+.fact{background:#0b1233;border-left:4px solid var(--amb);padding:10px 12px;border-radius:8px;margin:14px 0;font-size:14px;color:#cbd6ff}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+/* quiz */
+.qcard{background:var(--card);border:1px solid #2a376f;border-radius:22px;padding:18px;margin-top:6px}
+.qhead{display:flex;justify-content:space-between;font-weight:800;color:var(--mut);font-size:14px;margin-bottom:10px}
+.qcard h3{font-size:21px;line-height:1.3;margin-bottom:14px}
+.opt{display:block;width:100%;text-align:left;margin:9px 0;padding:14px;border-radius:14px;border:2px solid #2f3d80;background:#0b1233;color:var(--ink);font:700 16px Nunito;cursor:pointer;transition:.15s}
+.opt:hover:not(:disabled){border-color:var(--cy)}
+.opt.ok{background:#0f4a33;border-color:var(--good)}
+.opt.no{background:#4a1530;border-color:var(--bad);animation:shake .4s}
+.opt:disabled{cursor:default;opacity:.85}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.hintbox{display:none;margin-top:12px;padding:12px;border-radius:12px;background:#3a2a10;border:1px dashed var(--amb);color:#ffe2a8;font-weight:700}
+.msg{margin-top:12px;font-weight:800;min-height:22px}
+.center{text-align:center;padding:28px 10px}
+.center .big{font-size:70px}
+.center h2{font-size:28px;margin:8px 0}
+.bigscore{font:700 54px 'Chakra Petch';color:var(--amb)}
+/* badges / board */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.badge{background:var(--card);border:1px solid #2a376f;border-radius:18px;padding:16px 8px;text-align:center;font-weight:800;font-size:13px}
+.badge .em{font-size:40px;display:block;margin-bottom:6px}
+.badge.lock{opacity:.35;filter:grayscale(1)}
+.sec{font-family:'Chakra Petch';font-size:19px;margin:18px 2px 10px}
+.lb{background:var(--card);border-radius:16px;border:1px solid #2a376f;padding:6px 14px}
+.lb div{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #222e63;font-weight:800}
+.lb div:last-child{border:0}
+.set{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid #2a376f;border-radius:16px;padding:14px;margin-bottom:10px;font-weight:800}
+.set small{display:block;color:var(--mut);font-weight:600}
+.sw{width:52px;height:30px;border-radius:99px;background:#0b1233;border:2px solid #34428a;position:relative;cursor:pointer;flex:none}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:var(--mut);transition:.2s}
+.sw.on{background:#0f4a55;border-color:var(--cy)}.sw.on::after{left:24px;background:var(--cy)}
+input[type=range]{width:130px;accent-color:var(--amb)}
+#toast{position:fixed;left:50%;top:70px;transform:translateX(-50%) translateY(-20px);background:var(--amb);color:#1a1030;padding:10px 18px;border-radius:99px;font-weight:800;opacity:0;pointer-events:none;transition:.3s;z-index:40;max-width:90%;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div id="app">
+ <div class="top"><div class="brand">Abandoned but Not Forgotten<small>NASA's retired robots &amp; machines</small></div><div class="chip" id="chip">🏆 0</div></div>
+ <main>
+  <section class="screen" id="s-name"><div class="hero"><div class="orb">🤖</div><h1>Abandoned but<br>Not Forgotten</h1><p>Hidden in the dark are robots and machines NASA left behind. Find them, hear their stories, and earn their badges.</p>
+   <input type="text" id="nm" maxlength="14" placeholder="Enter your name" autocomplete="off"><br><button class="btn" id="go">Start exploring</button></div></section>
+
+  <section class="screen" id="s-home">
+   <div class="hh"><h2>Hi <span id="hi"></span>, look closely!</h2>
+   <div class="hint-line"><span>Found</span><div class="bar"><i id="pb"></i></div><b id="fc">0</b></div></div>
+   <div class="map" id="map"><div class="world" id="world"></div>
+    <div class="zc"><button id="zi" aria-label="Zoom in">+</button><button id="zo" aria-label="Zoom out">&minus;</button><button id="zr" aria-label="Reset view">&#10530;</button></div>
+    <div class="tip">Drag to explore · pinch or scroll to zoom</div></div>
+  </section>
+
+  <section class="screen" id="s-quiz"></section>
+
+  <section class="screen" id="s-badges">
+   <div class="sec">Your badges</div><div class="grid" id="bg"></div>
+   <div class="sec">Highest scores</div><div class="lb" id="lb"></div>
+  </section>
+
+  <section class="screen" id="s-set">
+   <div class="sec">Settings</div>
+   <div class="set"><span>Background music<small>Soft space ambience</small></span><div class="sw" id="t-music" role="switch" tabindex="0"></div></div>
+   <div class="set"><span>Sound effects<small>Taps, chimes, badges</small></span><div class="sw" id="t-sfx" role="switch" tabindex="0"></div></div>
+   <div class="set"><span>Funny wrong-answer sound<small>Boing! when you miss</small></span><div class="sw" id="t-err" role="switch" tabindex="0"></div></div>
+   <div class="set"><span>Read stories aloud<small>Robot narration voice</small></span><div class="sw" id="t-voice" role="switch" tabindex="0"></div></div>
+   <div class="set"><span>Volume</span><input type="range" id="vol" min="0" max="100"></div>
+   <div class="set"><span>Player<small id="pn"></small></span><button class="btn ghost" id="chg" style="padding:9px 14px;font-size:14px">Change name</button></div>
+   <div class="set"><span>Erase all progress<small>Badges and scores</small></span><button class="btn ghost" id="rst" style="padding:9px 14px;font-size:14px">Reset</button></div>
+  </section>
+ </main>
+ <nav id="nav"><button data-s="home" class="on"><b>🔭</b>Explore</button><button data-s="quiz"><b>🎮</b>Quiz</button><button data-s="badges"><b>🏅</b>Badges</button><button data-s="set"><b>⚙️</b>Settings</button></nav>
+</div>
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+<div id="toast"></div>
+
+<script>
+const D=[
+{id:"skylab",e:"🛰️",n:"Skylab",m:"America's first space station · 1973–1979",x:12,y:18,s:54,
+ st:"I was Skylab, the first space station built by NASA. Three crews lived inside me and did experiments, studied the Sun, and even grew tiny gardens of science. After the last crew left in 1974, I orbited alone. The Sun grew active, my orbit dropped, and in July 1979 I fell back to Earth, with pieces landing near Western Australia. I was left behind, but I taught NASA how people live in space.",
+ fact:"Skylab was built from the upper stage of a Saturn V moon rocket.",
+ q:"Which was America's first space station, which fell back to Earth in 1979?",o:["Mir","Skylab","Salyut","Gemini"],a:1,h:"Its name means a laboratory in the sky."},
+{id:"spirit",e:"🤖",n:"Spirit Rover",m:"Mars Exploration Rover · 2004–2010",x:64,y:52,s:50,
+ st:"I am Spirit, a Mars rover with six wheels. I was built to work for only 90 days, but I kept exploring for about six years! In 2009 my wheels sank into soft sand and I got stuck. I could not turn my panels toward the Sun in the cold Martian winter, and in 2010 I fell silent. I still sit there on Mars, remembered for finding signs of ancient water.",
+ fact:"Spirit and its twin landed in January 2004, on opposite sides of Mars.",
+ q:"What trapped Spirit the rover in 2009?",o:["Soft sand","A deep lake","A rock avalanche","A broken camera"],a:0,h:"Its wheels dug into something loose, like sand at a beach."},
+{id:"opp",e:"🚙",n:"Opportunity Rover",m:"Mars Exploration Rover · 2004–2018",x:34,y:66,s:50,
+ st:"I am Opportunity. My mission was planned for 90 Martian days, but I roamed for almost 15 Earth years and drove far enough to cover a marathon. In 2018 a giant dust storm covered Mars and blocked the sunlight my solar panels needed. My team sent thousands of messages, but I stayed silent. My last words are often told as: my battery is low and it is getting dark.",
+ fact:"Opportunity drove more than 45 km (28 miles) on Mars.",
+ q:"What silenced Opportunity in 2018?",o:["A giant dust storm","A meteor hit","Running out of fuel","A rover collision"],a:0,h:"It blocked the sunlight its solar panels needed."},
+{id:"vg",e:"🔭",n:"Vanguard 1",m:"Oldest satellite still in orbit · 1958",x:78,y:14,s:46,
+ st:"I am Vanguard 1, a satellite about the size of a grapefruit. I launched in 1958 and my little solar cells kept my radio talking for years. My signals stopped in 1964, but I never left. I am still circling Earth, the oldest human-made object in orbit. My path helped scientists learn that Earth is slightly pear-shaped.",
+ fact:"Vanguard 1 is expected to orbit for hundreds of years.",
+ q:"Vanguard 1 launched in the same decade as Sputnik. Which decade?",o:["1930s","1950s","1970s","1990s"],a:1,h:"Sputnik launched in 1957."},
+{id:"lrv",e:"🚜",n:"Lunar Roving Vehicle",m:"Apollo moon buggy · 1971–1972",x:8,y:58,s:52,
+ st:"I am the Lunar Roving Vehicle, the Moon buggy! Astronauts folded me up, carried me to the Moon, and drove me across dusty plains. When each mission ended, they parked me and flew home, because there was no room for me. Three of my kind are still on the Moon, waiting quietly under the black sky.",
+ fact:"The rovers were left on the Moon after Apollo 15, 16 and 17.",
+ q:"How many lunar rovers did NASA leave on the Moon?",o:["1","2","3","6"],a:2,h:"One each from Apollo 15, 16 and 17."},
+{id:"ing",e:"🚁",n:"Ingenuity",m:"First helicopter on Mars · 2021–2024",x:52,y:24,s:48,
+ st:"I am Ingenuity, a tiny helicopter that rode to Mars on the Perseverance rover. In April 2021 I made the first powered flight on another planet. I was meant to fly just five times, but I flew 72! In January 2024 one of my blades was damaged in a rough landing, so I retired. I stay on Mars as a proof that flying there is possible.",
+ fact:"Ingenuity's blades spun about 2,400 times a minute to fly in thin air.",
+ q:"On which world did Ingenuity become the first helicopter to fly?",o:["Venus","The Moon","Mars","Jupiter"],a:2,h:"The Red Planet."},
+{id:"p10",e:"📡",n:"Pioneer 10",m:"First craft to visit Jupiter · 1972–2003",x:88,y:34,s:46,
+ st:"I am Pioneer 10. I launched in 1972 and became the first spacecraft to cross the asteroid belt and the first to fly past Jupiter. I carry a small gold plaque showing a man, a woman, and where Earth is, in case someone out there finds me. My last signal reached Earth in January 2003. Now I drift silently toward the stars.",
+ fact:"Pioneer 10's plaque was designed as a greeting card for any alien who finds it.",
+ q:"Which giant planet did Pioneer 10 visit before any other spacecraft?",o:["Saturn","Jupiter","Neptune","Mars"],a:1,h:"It is the biggest planet in our solar system."},
+{id:"soj",e:"🚐",n:"Sojourner",m:"First rover on Mars · 1997",x:72,y:72,s:46,
+ st:"I am Sojourner, the very first rover to roll on Mars! I was only about the size of a microwave oven. I landed in 1997 with the Pathfinder lander, tucked inside a cocoon of airbags. I was planned to work for one week but kept exploring for almost three months. After Pathfinder went quiet in September 1997, I was left behind on the red sand.",
+ fact:"Sojourner was named after Sojourner Truth, who traveled to speak up for equality.",
+ q:"Sojourner was about the size of which household item?",o:["A refrigerator","A microwave oven","A sofa","A car"],a:1,h:"You use it to heat your lunch."},
+{id:"lm",e:"🌕",n:"Lunar Module Stage",m:"Apollo landing stages · 1969–1972",x:44,y:46,s:50,
+ st:"I am the bottom half of an Apollo Lunar Module, the part that landed astronauts on the Moon. When it was time to go home, the astronauts blasted off in the top half, and I stayed behind. My legs still stand on the dusty ground, like a silent monument. Six of my kind rest on the Moon, marking where humans first set foot.",
+ fact:"The flags, tools and footprints from Apollo are still on the Moon, where there is no wind to erase them.",
+ q:"When astronauts left the Moon, the bottom of the lunar module worked as a what?",o:["Telescope","Launch platform","Space house","Radio tower"],a:1,h:"The top half blasted off from it."},
+{id:"kep",e:"🪐",n:"Kepler Telescope",m:"Planet-hunting space telescope · 2009–2018",x:26,y:6,s:48,
+ st:"I am the Kepler Space Telescope, a planet hunter. I stared at one patch of sky and watched stars for tiny dips in brightness when planets passed in front of them. Thanks to me, we learned that planets are everywhere, with thousands found around other stars. In 2018 my fuel ran out and I could no longer point at my targets. I was switched off in space, still circling the Sun.",
+ fact:"Kepler helped show that most stars have at least one planet.",
+ q:"Why did the Kepler telescope retire in 2018?",o:["Hit by a meteor","Ran out of fuel","Lost its mirror","Fell into the Sun"],a:1,h:"Its tank was empty, like a car with no gas."},
+{id:"ins",e:"🎧",n:"InSight Lander",m:"Mars quake listener · 2018–2022",x:52,y:80,s:46,
+ st:"I am InSight, a lander that sat still on Mars and listened. My sensitive seismometer heard hundreds of marsquakes and even the thump of space rocks crashing into the planet. Slowly, dust piled up on my solar panels and my power faded. In December 2022 my mission ended, and I was left resting on the plains of Mars.",
+ fact:"InSight's quake data helped scientists measure the size of Mars' core.",
+ q:"What did InSight listen for on Mars?",o:["Alien radio","Marsquakes","Thunderstorms","Ocean waves"],a:1,h:"Like earthquakes, but on Mars."},
+{id:"phx",e:"❄️",n:"Phoenix Lander",m:"Mars arctic digger · 2008",x:20,y:38,s:46,
+ st:"I am Phoenix, a lander that touched down near the Martian north pole in 2008. I used a robotic arm to dig into the ground and found frozen water just below the surface. As autumn came, the Sun sank lower and my solar panels lost power. By November 2008 I went quiet, frozen in the ice I had discovered.",
+ fact:"Phoenix proved there is water ice right under the dust of Mars.",
+ q:"What did Phoenix dig up and confirm on Mars?",o:["Gold","Water ice","Dinosaur bones","Coal"],a:1,h:"Frozen H2O."}
+];
+const JUNK=[["⚙️",30,40],["🔩",88,66],["☄️",46,8],["🧲",20,80]];
+
+const add=(e,n,m,st,fact,q,o,a,h)=>D.push({id:n,e,n,m,st,fact,q,o,a,h,s:42});
+add("🛸","Pioneer 11","First visitor to Saturn · 1973–1995","I am Pioneer 11, twin of Pioneer 10. I flew past Jupiter in 1974 and became the first spacecraft to visit Saturn in 1979, sending the first close pictures of its rings. My last contact with Earth was in 1995.","Pioneer 11 also carries a gold plaque with a message from humans.","Pioneer 11 was the first spacecraft to visit which ringed planet?",["Saturn","Mercury","Mars","Earth"],0,"It is famous for its beautiful rings.");
+add("💍","Cassini","Saturn explorer · 1997–2017","I am Cassini. I spent 13 years around Saturn, found water geysers on the moon Enceladus, and carried the Huygens probe to Titan. In 2017 my fuel was nearly gone, so NASA sent me on a final dive into Saturn to keep its moons clean.","Cassini sent data right up to the moment it entered Saturn's atmosphere.","How did Cassini end its mission in 2017?",["It dived into Saturn","It landed on Titan","It flew to Neptune","It returned to Earth"],0,"It burned up in the planet it studied.");
+add("🌪️","Galileo","Jupiter orbiter · 1989–2003","I am Galileo. I orbited Jupiter for almost eight years and found clues to a salty ocean under the ice of Europa. In 2003 NASA steered me into Jupiter on purpose so no Earth germs could ever reach Europa.","Galileo dropped a small probe into Jupiter's atmosphere in 1995.","Why did NASA send Galileo into Jupiter?",["To protect moons from Earth germs","To save money","To catch a comet","It was a mistake"],0,"Europa might have life, and NASA wanted to keep it clean.");
+add("🌡️","Spitzer Telescope","Infrared space telescope · 2003–2020","I am Spitzer. I saw the universe in infrared light, which is heat our eyes cannot see. I helped find seven Earth-size planets around a star called TRAPPIST-1. In January 2020 I was switched off and I still trail Earth around the Sun.","Spitzer worked for more than 16 years, far longer than planned.","Spitzer saw the universe in which kind of light?",["Infrared","Sound","X-ray only","Moonlight"],0,"It is the heat glow that night-vision cameras see.");
+add("☢️","Compton Observatory","Gamma-ray telescope · 1991–2000","I am the Compton Gamma Ray Observatory, one of the heaviest science satellites ever launched. I watched the most powerful blasts of light in the universe. When a gyroscope broke, NASA safely brought me down over the Pacific Ocean in 2000.","Compton helped show that gamma-ray bursts come from very distant galaxies.","Which invisible light did the Compton Observatory study?",["Gamma rays","Visible light","Radio waves","Ultraviolet only"],0,"The Hulk got his powers from this.");
+add("📷","Surveyor 3","Robot Moon lander · 1967","I am Surveyor 3, a robot lander that scouted the Moon in April 1967 and sent thousands of pictures. In 1969 Apollo 12 astronauts walked over, cut off my camera, and brought it back to Earth.","Apollo 12 landed only about 160 meters from Surveyor 3.","Which Apollo mission visited Surveyor 3 and took its camera home?",["Apollo 8","Apollo 11","Apollo 12","Apollo 17"],2,"It was the second mission to land on the Moon.");
+add("⚛️","Deep Space 1","Ion engine test craft · 1998–2001","I am Deep Space 1, a test craft. I tried out an ion engine that pushes with tiny charged particles instead of a big flame. I flew past an asteroid and a comet, and later missions copied my tools. In 2001 I was switched off.","Its ion engine gave a gentle push, but it kept running for months.","Deep Space 1 tested a new engine powered by what?",["Ions","Coal","Wind","Steam"],0,"Tiny electric particles pushed out the back.");
+add("🌅","Dawn","Asteroid belt explorer · 2007–2018","I am Dawn. I visited Vesta and then the dwarf planet Ceres, and I became the first spacecraft to orbit two worlds beyond Earth. In 2018 my fuel ran out, and I still circle Ceres in silence.","Dawn used an ion engine to travel from Vesta to Ceres.","Dawn was the first spacecraft to orbit which dwarf planet?",["Pluto","Ceres","Eris","Haumea"],1,"It lives in the asteroid belt, and its name starts with C.");
+add("📏","Mars Climate Orbiter","Lost on arrival · 1998–1999","I am Mars Climate Orbiter. In 1999 I reached Mars but flew too low and was lost. One team used metric units and another used imperial units, so the numbers did not match. I taught NASA to double-check every unit.","The mix-up was between newtons and pounds of force.","What mix-up doomed Mars Climate Orbiter?",["Metric and imperial units","Wrong planet","Bad weather","A power cut"],0,"Think meters versus feet.");
+add("🚀","Explorer 1","First US satellite · 1958","I am Explorer 1, the first satellite launched by the United States, in January 1958. My little detector discovered belts of radiation around Earth, now called the Van Allen belts. In 1970 I fell back into the atmosphere.","Explorer 1 weighed only about 14 kilograms.","Explorer 1 discovered belts of what around Earth?",["Radiation","Water","Dust","Ice"],0,"They are named after scientist James Van Allen.");
+add("🧊","Lunar Prospector","Moon mapper · 1998–1999","I am Lunar Prospector, a small spinning spacecraft that mapped the Moon. I found signs of hydrogen at the poles, a hint of water ice. In 1999 NASA crashed me into a dark crater on purpose, hoping to kick up water.","Lunar Prospector carried the ashes of scientist Eugene Shoemaker to the Moon.","How did Lunar Prospector end its mission?",["Crashed into the Moon on purpose","Flew to Mars","Returned to Earth","Disappeared"],0,"A final splash into a crater.");
+add("🎓","GRAIL Ebb and Flow","Twin Moon probes · 2011–2012","We are GRAIL, two probes that chased each other around the Moon and measured its gravity. Fourth graders from Montana named us Ebb and Flow. In December 2012 we finished and gently crashed into a lunar mountain.","GRAIL made the most detailed gravity map of the Moon.","Who chose the names Ebb and Flow for the GRAIL twins?",["Fourth graders","NASA's boss","Astronauts","A robot"],0,"Students about nine years old.");
+add("🪂","Mars Polar Lander","Lost during landing · 1999","I am Mars Polar Lander. I was heading to the icy land near Mars' south pole to dig for water. On December 3, 1999 I began my landing, and then my radio went silent. My loss taught NASA to test landers even more carefully.","Two tiny probes called Deep Space 2 rode along to test for ice.","Where on Mars was Mars Polar Lander headed?",["Near the south pole","Inside a volcano","To a moon of Mars","The equator"],0,"Polar is a big clue in its name.");
+add("🌞","Genesis","Solar wind collector · 2001–2004","I am Genesis. I flew beyond the Moon and opened collector plates to catch the solar wind, the stream of particles from the Sun. In 2004 my capsule crashed in the Utah desert, but scientists still saved and studied my samples.","Genesis gathered particles from the Sun for more than two years.","What did the Genesis spacecraft collect?",["Solar wind particles","Moon rocks","Comet ice","Mars soil"],0,"It flows from the Sun all the time.");
+add("✨","Stardust","Comet dust catcher · 1999–2011","I am Stardust. I flew past comet Wild 2 and caught its dust in a super-light foam called aerogel. In January 2006 my capsule parachuted into Utah with the first comet dust ever brought to Earth.","Aerogel is one of the lightest solid materials ever made.","Stardust brought dust from what back to Earth?",["A comet","A black hole","The Sun","Jupiter"],0,"It has a long glowing tail.");
+add("🌌","WMAP","Big Bang mapper · 2001–2010","I am WMAP. I studied the faint glow left over from the Big Bang. My map helped show the universe is about 13.8 billion years old. In 2010 NASA moved me to a quiet graveyard orbit around the Sun and switched me off.","WMAP measured tiny temperature differences in the early universe's glow.","WMAP studied the leftover glow of which event?",["The Big Bang","A supernova","A solar storm","A comet crash"],0,"It is when our universe began.");
+add("🔬","Viking 1 Lander","Mars life detective · 1976–1982","I am Viking 1, the first American lander to work on Mars. I landed on July 20, 1976 and sent home the first color pictures from the surface. My arm scooped soil to search for tiny living things. I went quiet in 1982.","Viking 1 worked for more than six years on Mars.","What were the Viking landers searching for on Mars?",["Signs of life","Gold","Ancient cities","Oil"],0,"Tiny living things called microbes.");
+add("🎯","Ranger 7","First close-up Moon photos · 1964","I am Ranger 7. NASA sent me straight at the Moon to take pictures until I hit it. I sent back 4,316 photos, closer than anyone had ever seen. On July 31, 1964 I crashed, and my pictures helped plan the Apollo landings.","Ranger 7's final photos showed craters smaller than a meter wide.","How did Ranger 7 take its close-up Moon photos?",["While crashing toward the Moon","From Earth","By landing softly","From an astronaut's camera"],0,"It took pictures until it hit the Moon.");
+add("🔴","Mariner 4","First Mars flyby · 1964–1967","I am Mariner 4. In July 1965 I flew past Mars and sent back the first close-up photos of another planet. They showed a cratered, dry world. My contact with Earth ended in 1967.","Mariner 4 sent its pictures back as digital data, one tiny piece at a time.","Mariner 4 was the first spacecraft to fly past which planet?",["Mars","Venus","Saturn","Neptune"],0,"The Red Planet.");
+add("📡","Magellan","Venus mapper · 1989–1994","I am Magellan. Venus hides under thick clouds, so I used radar to see through them and mapped almost the whole planet. In 1994 NASA sent me into Venus' atmosphere, where I burned up.","Magellan was launched from a space shuttle in 1989.","How did Magellan see the surface of cloudy Venus?",["With radar","With a flashlight","With a diver","With a telescope on Earth"],0,"Radio waves can pass through clouds.");
+add("🌍","Lunar Orbiter 1","First Earthrise view · 1966","I am Lunar Orbiter 1. In August 1966 I orbited the Moon and captured the first picture of Earth rising over the lunar horizon. NASA crashed me into the Moon a few months later to keep my radio from interfering with other craft.","Lunar Orbiters mapped the Moon to help choose Apollo landing sites.","What famous view did Lunar Orbiter 1 capture first?",["Earth seen from the Moon","The Sun's surface","A comet","Mars from space"],0,"It looked back at our home planet.");
+add("🗺️","Mars Global Surveyor","Mars mapper · 1996–2006","I am Mars Global Surveyor. I circled Mars for about ten years, mapping the whole planet and finding gullies and layered rocks. In November 2006 I stopped answering my calls and never spoke again.","It took more than 240,000 pictures of Mars.","What did Mars Global Surveyor spend its life doing?",["Circling and mapping Mars","Driving on Mars","Digging on Mars","Flying to Venus"],0,"Global means the whole planet.");
+add("☿️","MESSENGER","Mercury orbiter · 2004–2015","I am MESSENGER. In 2011 I became the first spacecraft to orbit Mercury. I found water ice hiding in shadowed craters near its poles. In 2015 my fuel ran out and I crashed onto Mercury.","MESSENGER mapped all of Mercury's surface.","MESSENGER was the first spacecraft to orbit which planet?",["Mercury","Venus","Jupiter","Uranus"],0,"It is the closest planet to the Sun.");
+add("💥","Deep Impact","Comet crasher · 2005–2013","I am Deep Impact. On July 4, 2005 I released a probe that crashed into comet Tempel 1, so scientists could see what was inside. I later visited another comet, until contact was lost in 2013.","The crash flash was seen by telescopes on Earth.","What did Deep Impact do on July 4, 2005?",["Sent a probe into a comet","Landed on Mars","Took a Moon selfie","Caught a comet"],0,"Its name says the plan.");
+add("🌙","Apollo Moon Instruments","ALSEP stations · 1969–1977","We are the science stations Apollo astronauts left on the Moon. We measured moonquakes, heat and dust for years. In 1977 NASA switched us off to save money, and we stayed on the Moon.","Five Apollo missions left instrument stations on the Moon.","What did the seismometers left by Apollo astronauts detect?",["Moonquakes","Alien signals","Weather","Lightning"],0,"Like earthquakes, but on the Moon.");
+add("☀️","Ulysses","Sun pole explorer · 1990–2009","I am Ulysses. I used Jupiter's gravity to swing out of the flat path of the planets and fly over the Sun's poles, a place no craft had seen. I worked for 18 years, far longer than planned, until my power faded in 2009.","Ulysses was launched by a space shuttle in 1990.","Ulysses studied the Sun from where?",["Over its poles","From Earth","Inside it","From Mercury"],0,"The top and bottom of the Sun.");
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let S={name:"",found:{},badges:{},best:{},board:[],set:{music:true,sfx:true,err:true,voice:true,vol:90}};
+try{const r=localStorage.getItem("abnf");if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+if(S.v!==2){S.v=2;S.set.vol=90}
+const save=()=>{try{localStorage.setItem("abnf",JSON.stringify(S))}catch(e){}};
+/* ---------- audio ---------- */
+let AC,MG,musicOn=false,pad=[];
+const gv=()=>Math.min(2.2,S.set.vol/100*1.8);
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();MG=AC.createGain();const cp=AC.createDynamicsCompressor();MG.connect(cp);cp.connect(AC.destination)}catch(e){return null}}
+ if(AC.state==="suspended")AC.resume();MG.gain.value=gv();return AC}
+function tone(f,d,type="sine",v=.25,to=null,at=0){if(!S.set.sfx)return;const c=ac();if(!c)return;const t=c.currentTime+at,o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(to)o.frequency.exponentialRampToValueAtTime(to,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(MG);o.start(t);o.stop(t+d+.05)}
+const sfx={
+ tap:()=>{tone(520,.12,"triangle",.2,900)},
+ open:()=>{[392,523,659,784].forEach((f,i)=>tone(f,.2,"sine",.18,null,i*.07))},
+ good:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.25,"triangle",.22,null,i*.09))},
+ badge:()=>{[523,659,784,1047,1319,1568].forEach((f,i)=>tone(f,.35,"square",.1,null,i*.08))},
+ junk:()=>{tone(180,.15,"square",.12,90)},
+ bad:()=>{if(!S.set.err)return;const c=ac();if(!c)return;
+  const t=c.currentTime,o=c.createOscillator(),g=c.createGain(),l=c.createOscillator(),lg=c.createGain();
+  o.type="sawtooth";o.frequency.setValueAtTime(700,t);o.frequency.exponentialRampToValueAtTime(90,t+.9);
+  l.frequency.value=11;lg.gain.value=40;l.connect(lg);lg.connect(o.frequency);
+  g.gain.setValueAtTime(.28,t);g.gain.exponentialRampToValueAtTime(.001,t+.95);o.connect(g);g.connect(MG);
+  o.start(t);l.start(t);o.stop(t+1);l.stop(t+1);
+  const sv=S.set.sfx;S.set.sfx=true;tone(160,.18,"sine",.35,420,.95);tone(420,.18,"sine",.3,120,1.12);S.set.sfx=sv}
+};
+function music(on){const c=ac();if(!c)return;if(on&&!musicOn){musicOn=true;
+  [[110,0],[164.8,4],[220,-3],[277.2,6]].forEach(([f,d])=>{const o=c.createOscillator(),g=c.createGain(),fl=c.createBiquadFilter();o.type="sine";o.frequency.value=f;o.detune.value=d;fl.type="lowpass";fl.frequency.value=600;g.gain.value=.05;
+   const l=c.createOscillator(),lg=c.createGain();l.frequency.value=.1+Math.random()*.15;lg.gain.value=.03;l.connect(lg);lg.connect(g.gain);l.start();
+   o.connect(fl);fl.connect(g);g.connect(MG);o.start();pad.push(o,l)})}
+ else if(!on&&musicOn){musicOn=false;pad.forEach(o=>{try{o.stop()}catch(e){}});pad=[]}}
+/* ---------- helpers ---------- */
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("on"),2200)}
+function show(s){$$(".screen").forEach(x=>x.classList.remove("on"));$("#s-"+s).classList.add("on");$$("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.s===s));$("#nav").style.display=s==="name"?"none":"flex";
+ if(s==="home")drawField();if(s==="quiz")quizIntro();if(s==="badges")drawBadges();if(s==="set")drawSet();$("main").scrollTop=0}
+function chip(){$("#chip").textContent="🏆 "+(S.best[S.name]||0)}
+/* ---------- stars ---------- */
+const cv=$("#stars"),cx=cv.getContext("2d");let st=[];
+function initStars(){cv.width=innerWidth;cv.height=innerHeight;st=Array.from({length:110},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.5+.3,p:Math.random()*6}))}
+function tick(t){cx.clearRect(0,0,cv.width,cv.height);st.forEach(s=>{cx.globalAlpha=.4+.6*Math.abs(Math.sin(t/1200+s.p));cx.fillStyle="#fff";cx.beginPath();cx.arc(s.x,s.y,s.r,0,7);cx.fill()});requestAnimationFrame(tick)}
+addEventListener("resize",initStars);initStars();requestAnimationFrame(tick);
+/* ---------- explore ---------- */
+const J=(i,k)=>(((i*(31+k*17)+k*13)%7)-3)*11;
+let M={s:1,x:0,y:0,min:.3,max:2.8,W:0,H:0,ok:false},ptrs=new Map(),moved=0,pdist=0;
+function applyM(){const m=$("#map"),vw=m.clientWidth,vh=m.clientHeight,sw=M.W*M.s,sh=M.H*M.s;
+ M.x=sw<=vw?(vw-sw)/2:Math.min(0,Math.max(vw-sw,M.x));M.y=sh<=vh?(vh-sh)/2:Math.min(0,Math.max(vh-sh,M.y));
+ $("#world").style.transform=`translate(${M.x}px,${M.y}px) scale(${M.s})`}
+function zoomAt(cx,cy,ns){ns=Math.max(M.min,Math.min(M.max,ns));const k=ns/M.s;M.x=cx-(cx-M.x)*k;M.y=cy-(cy-M.y)*k;M.s=ns;applyM()}
+function drawField(){$("#hi").textContent=S.name;const w=$("#world"),m=$("#map");w.innerHTML="";
+ const N=D.length,cols=Math.ceil(Math.sqrt(N*1.6)),rows=Math.ceil(N/cols),C=150;
+ M.W=cols*C+C;M.H=rows*C+C;w.style.width=M.W+"px";w.style.height=M.H+"px";
+ const junk=["⚙️","🔩","☄️","🧲","🔧","🔋"];
+ for(let i=0;i<cols*rows;i+=3){const r=(i/cols)|0,c=i%cols,b=document.createElement("button");b.className="obj junk";b.style.cssText=`left:${C/2+c*C+75}px;top:${C/2+r*C+75}px;font-size:26px`;b.textContent=junk[(i/3|0)%6];b.setAttribute("aria-label","space junk");b.onclick=()=>{if(moved>8)return;sfx.junk();toast("Just space junk. Keep looking!")};w.appendChild(b)}
+ D.forEach((d,i)=>{const r=(i/cols)|0,c=i%cols,b=document.createElement("button");b.className="obj"+(S.found[d.id]?" found":"");b.style.cssText=`left:${C/2+c*C+J(i,1)}px;top:${C/2+r*C+J(i,2)}px;font-size:${Math.max(d.s||44,40)}px;animation-delay:${-i*.8}s`;b.textContent=d.e;b.setAttribute("aria-label",d.n);b.onclick=()=>{if(moved>8)return;story(d)};w.appendChild(b)});
+ const n=Object.keys(S.found).length;$("#fc").textContent=n+"/"+N;$("#pb").style.width=n/N*100+"%";
+ const vw=m.clientWidth,vh=m.clientHeight,fit=Math.min(vw/M.W,vh/M.H);M.min=Math.max(.15,fit*.9);
+ if(!M.ok&&vw){M.s=Math.min(1.2,Math.max(fit,.75));M.x=M.y=0;M.ok=true}
+ applyM()}
+const map=$("#map");
+map.addEventListener("pointerdown",e=>{ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});moved=0;if(ptrs.size===2){const[a,b]=[...ptrs.values()];pdist=Math.hypot(a.x-b.x,a.y-b.y)}});
+addEventListener("pointermove",e=>{const p=ptrs.get(e.pointerId);if(!p)return;
+ if(ptrs.size===1){const dx=e.clientX-p.x,dy=e.clientY-p.y;M.x+=dx;M.y+=dy;moved+=Math.abs(dx)+Math.abs(dy);p.x=e.clientX;p.y=e.clientY;applyM()}
+ else if(ptrs.size===2){p.x=e.clientX;p.y=e.clientY;const[a,b]=[...ptrs.values()],d=Math.hypot(a.x-b.x,a.y-b.y),r=map.getBoundingClientRect();moved+=20;if(pdist)zoomAt((a.x+b.x)/2-r.left,(a.y+b.y)/2-r.top,M.s*d/pdist);pdist=d}});
+["pointerup","pointercancel"].forEach(t=>addEventListener(t,e=>{ptrs.delete(e.pointerId);pdist=0}));
+map.addEventListener("wheel",e=>{e.preventDefault();const r=map.getBoundingClientRect();zoomAt(e.clientX-r.left,e.clientY-r.top,M.s*(e.deltaY<0?1.15:1/1.15))},{passive:false});
+const zc=f=>()=>{sfx.tap();zoomAt(map.clientWidth/2,map.clientHeight/2,M.s*f)};
+$("#zi").onclick=zc(1.3);$("#zo").onclick=zc(1/1.3);$("#zr").onclick=()=>{M.ok=false;drawField()};
+addEventListener("resize",()=>{if($("#s-home").classList.contains("on"))drawField()});
+function story(d){sfx.open();S.found[d.id]=1;save();
+ $("#sheet").innerHTML=`<div class="big">${d.e}</div><h2>${d.n}</h2><div class="meta">${d.m}</div><div class="story">${d.st}</div><div class="fact"><b>Did you know?</b> ${d.fact}</div><div class="row"><button class="btn ghost" id="say">🔊 Listen</button><button class="btn" id="cl">Close</button></div>`;
+ $("#modal").classList.add("on");
+ const say=()=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(d.st);u.rate=.95;u.pitch=1.15;u.volume=1;speechSynthesis.speak(u)}catch(e){}};
+ $("#say").onclick=say;if(S.set.voice)say();
+ $("#cl").onclick=closeM;drawField()}
+function closeM(){try{speechSynthesis.cancel()}catch(e){}$("#modal").classList.remove("on")}
+$("#modal").onclick=e=>{if(e.target.id==="modal")closeM()};
+/* ---------- quiz ---------- */
+let Q=null;
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function quizIntro(){if(Q&&!Q.over&&Q.i>=0){drawQ();return}
+ $("#s-quiz").innerHTML=`<div class="center"><div class="big">🎮</div><h2>Robot Quiz</h2><p style="color:var(--mut);line-height:1.6">Answer ${Math.min(10,D.length)} random questions. Each question gives you 2 chances, and a hint after your first miss. Miss twice and the mission restarts. Every right answer wins a badge!</p><p>Your best: <b style="color:var(--amb)">${S.best[S.name]||0}</b></p><button class="btn" id="sq">Start mission</button></div>`;$("#sq").onclick=startQuiz}
+function startQuiz(){sfx.tap();Q={list:shuf(D).slice(0,10),i:0,score:0,tries:0,done:false,over:false};drawQ()}
+function drawQ(){const d=Q.list[Q.i];const os=d.o.map((t,k)=>({t,k}));
+ $("#s-quiz").innerHTML=`<div class="qcard"><div class="qhead"><span>Question ${Q.i+1}/${Q.list.length}</span><span>Score ${Q.score}</span><span id="hp">${"❤️".repeat(2-Q.tries)}${"🖤".repeat(Q.tries)}</span></div><h3>${d.q}</h3><div id="ops"></div><div class="hintbox" id="hb">💡 Hint: ${d.h}</div><div class="msg" id="mg"></div><div class="row" id="nx"></div></div>`;
+ const box=$("#ops");shuf(os).forEach(o=>{const b=document.createElement("button");b.className="opt";b.textContent=o.t;b.dataset.k=o.k;b.onclick=()=>pick(b,d);box.appendChild(b)});
+ if(Q.tries>0)$("#hb").style.display="block"}
+function pick(b,d){if(Q.done)return;const k=+b.dataset.k;
+ if(k===d.a){Q.done=true;const pts=Q.tries===0?10:5;Q.score+=pts;b.classList.add("ok");$$(".opt").forEach(x=>x.disabled=true);sfx.good();setTimeout(sfx.badge,350);
+  const nb=!S.badges[d.id];S.badges[d.id]=1;save();$("#mg").style.color="var(--good)";$("#mg").textContent=`Correct! +${pts} points. ${nb?"New badge: "+d.n+" 🏅":"Badge already yours."}`;
+  const last=Q.i===Q.list.length-1;$("#nx").innerHTML=`<button class="btn" id="nb">${last?"Finish mission":"Next question"}</button>`;$("#nb").onclick=()=>{if(last)end(true);else{Q.i++;Q.tries=0;Q.done=false;drawQ()}}}
+ else{b.classList.add("no");b.disabled=true;Q.tries++;sfx.bad();
+  if(Q.tries===1){$("#hb").style.display="block";$("#hp").textContent="❤️🖤";$("#mg").style.color="var(--bad)";$("#mg").textContent="Oops! Read the hint and try again."}
+  else{Q.done=true;$$(".opt").forEach(x=>{x.disabled=true;if(+x.dataset.k===d.a)x.classList.add("ok")});$("#hp").textContent="🖤🖤";$("#mg").style.color="var(--bad)";$("#mg").textContent="Mission failed. The answer is highlighted.";$("#nx").innerHTML=`<button class="btn" id="nb">See result</button>`;$("#nb").onclick=()=>end(false)}}}
+function end(win){Q.over=true;const p=Q.score,old=S.best[S.name]||0,rec=p>old;
+ if(rec)S.best[S.name]=p;S.board.push({n:S.name,s:p});S.board.sort((a,b)=>b.s-a.s);S.board=S.board.slice(0,5);save();chip();if(win)sfx.badge();
+ $("#s-quiz").innerHTML=`<div class="center"><div class="big">${win?"🏆":"💥"}</div><h2>${win?"Mission complete!":"Mission failed"}</h2><div class="bigscore">${p}</div><p style="color:var(--mut)">${rec&&p>0?"New personal record! 🎉":"Your best: "+(S.best[S.name]||0)}</p><div class="row"><button class="btn" id="ag">Start new quiz</button><button class="btn ghost" id="bd">View badges</button></div></div>`;
+ $("#ag").onclick=startQuiz;$("#bd").onclick=()=>show("badges")}
+/* ---------- badges & settings ---------- */
+function drawBadges(){$("#bg").innerHTML=D.map(d=>`<div class="badge ${S.badges[d.id]?"":"lock"}"><span class="em">${S.badges[d.id]?d.e:"🔒"}</span>${d.n}</div>`).join("");
+ $("#lb").innerHTML=S.board.length?S.board.map((r,i)=>`<div><span>${["🥇","🥈","🥉","4","5"][i]} ${r.n}</span><span>${r.s}</span></div>`).join(""):`<div><span style="color:var(--mut)">No scores yet. Play the quiz!</span></div>`}
+function drawSet(){$("#pn").textContent=S.name;[["music"],["sfx"],["err"],["voice"]].forEach(([k])=>$("#t-"+k).classList.toggle("on",!!S.set[k]));$("#vol").value=S.set.vol}
+["music","sfx","err","voice"].forEach(k=>{const el=$("#t-"+k),f=()=>{S.set[k]=!S.set[k];save();drawSet();if(k==="music")music(S.set.music);if(k==="err"&&S.set.err){sfx.bad()}else if(k==="sfx"&&S.set.sfx)sfx.good();if(k==="voice"&&!S.set.voice)try{speechSynthesis.cancel()}catch(e){}};el.onclick=f;el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();f()}}});
+$("#vol").oninput=e=>{S.set.vol=+e.target.value;if(MG)MG.gain.value=gv();save()};
+$("#chg").onclick=()=>{S.name="";Q=null;save();show("name");$("#nm").value=""};
+$("#rst").onclick=()=>{if(confirm("Erase all badges and scores?")){S.found={};S.badges={};S.best={};S.board=[];Q=null;save();chip();drawBadges();toast("Progress erased")}};
+$$("#nav button").forEach(b=>b.onclick=()=>{sfx.tap();show(b.dataset.s)});
+function enter(){const v=$("#nm").value.trim();if(!v){toast("Please type your name first");$("#nm").focus();return}S.name=v;save();chip();ac();if(S.set.music)music(true);sfx.open();show("home")}
+$("#go").onclick=enter;$("#nm").onkeydown=e=>{if(e.key==="Enter")enter()};
+document.addEventListener("pointerdown",()=>{if(S.name&&S.set.music&&!musicOn)music(true)},{once:true});
+chip();S.name?show("home"):show("name");
+</script>
+</body></html>
